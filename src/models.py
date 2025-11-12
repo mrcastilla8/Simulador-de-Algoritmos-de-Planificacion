@@ -8,6 +8,9 @@ Define las estructuras de datos utilizadas en el simulador.
 from dataclasses import dataclass, field
 from typing import List, Dict
 
+# Alias para el diccionario de promedios de métricas
+MetricasPromedio = Dict[str, float]
+
 
 @dataclass
 class Proceso:
@@ -23,6 +26,7 @@ class Proceso:
 class SegmentoGantt:
     """
     Representa un bloque de ejecución en el diagrama de Gantt.
+    Cada segmento indica qué proceso ejecutó entre 'inicio' y 'fin'.
     """
     proceso: str
     inicio: int
@@ -52,4 +56,4 @@ class ResultadoAlgoritmo:
     nombre_escenario: str
     procesos: List[ResultadoProceso] = field(default_factory=list)
     segmentos_gantt: List[SegmentoGantt] = field(default_factory=list)
-    promedios: Dict[str, float] = field(default_factory=dict)
+    promedios: MetricasPromedio = field(default_factory=dict)
