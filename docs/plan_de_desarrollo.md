@@ -1,4 +1,6 @@
+Perfecto, te doy **el mismo plan** pero **sin nada relacionado a `tests/` ni a esos `.txt`**. Mantengo todo lo demás.
 
+---
 
 ## 1. Objetivo funcional del programa
 
@@ -89,12 +91,6 @@ planificador_cpu/
 │  ├─ gantt.py
 │  ├─ cli.py
 │
-├─ tests/
-│  ├─ test_fcfs.txt          (casos manuales, no hace falta usar unittest)
-│  ├─ test_sjf.txt
-│  ├─ test_srtf.txt
-│  ├─ test_rr_q3_q6.txt
-│
 └─ docs/
    ├─ diseño_general.md      (flujo, estructuras de datos, decisiones)
    ├─ guia_uso_consola.md    (cómo ejecutar, ejemplos de salida)
@@ -102,7 +98,7 @@ planificador_cpu/
 ```
 
 > Todo el código real vive en `src/`.
-> Los tests pueden ser solo instrucciones + resultados esperados escritos a mano. Nada de frameworks si no quieren.
+> No habrá carpeta de `tests` ni archivos `test_*.txt`.
 
 ---
 
@@ -403,7 +399,7 @@ El CLI SOLO llama a `simulation.py` y muestra resultados. Nada de lógica de pla
      * `gantt.py` se integre bien con la estructura de segmentos.
    * Coordinar pruebas rápidas con los escenarios.
 
-
+> El líder escribe poco código “de lógica de algoritmos”; se centra sobre todo en `models.py`, documentación y revisar/ajustar pequeños detalles de los otros módulos.
 
 ---
 
@@ -413,7 +409,6 @@ El CLI SOLO llama a `simulation.py` y muestra resultados. Nada de lógica de pla
 
 * `src/algorithms/fcfs.py`
 * `src/algorithms/sjf.py`
-* Ayuda en `tests/test_fcfs.txt` y `tests/test_sjf.txt`
 
 **Tareas concretas**:
 
@@ -430,11 +425,6 @@ El CLI SOLO llama a `simulation.py` y muestra resultados. Nada de lógica de pla
    * Manejo de huecos de tiempo cuando no hay procesos listos.
    * Construir segmentos de Gantt.
 
-3. Preparar archivos de prueba manual:
-
-   * `tests/test_fcfs.txt`: describir el escenario, ejecución esperada, tiempos de finalización, etc.
-   * `tests/test_sjf.txt`: idem.
-
 ---
 
 ### BRICKZON – Algoritmos expropiativos (SRTF)
@@ -442,7 +432,6 @@ El CLI SOLO llama a `simulation.py` y muestra resultados. Nada de lógica de pla
 **Archivos**:
 
 * `src/algorithms/srtf.py`
-* `tests/test_srtf.txt`
 
 **Tareas**:
 
@@ -458,19 +447,13 @@ El CLI SOLO llama a `simulation.py` y muestra resultados. Nada de lógica de pla
      * Controlar cuando cambia el proceso activo para cortar segmentos.
    * Al final, entregar segmentos a `metrics.calcular_metricas`.
 
-2. Preparar `tests/test_srtf.txt`:
-
-   * Describir al menos un ejemplo por escenario con los resultados esperados.
-   * Marcar claramente tiempos de respuesta/espera para verificar.
-
 ---
 
-### AXEL – Round Robin q=3 y q=6, y parte de pruebas
+### AXEL – Round Robin q=3 y q=6
 
 **Archivos**:
 
 * `src/algorithms/round_robin.py`
-* `tests/test_rr_q3_q6.txt`
 
 **Tareas**:
 
@@ -485,10 +468,9 @@ El CLI SOLO llama a `simulation.py` y muestra resultados. Nada de lógica de pla
    * `simular_rr_q3(lista_procesos)`
    * `simular_rr_q6(lista_procesos)`
 
-3. Preparar `tests/test_rr_q3_q6.txt`:
+3. (Opcional para el informe, aunque no haya tests formales)
 
-   * Resultados esperados de ambos escenarios con q=3 y q=6.
-   * Documentar también el **número de cambios de contexto** observado (dato útil para el informe).
+   * Documentar en `docs/notas_validacion.md` el **número de cambios de contexto** observado para q=3 y q=6 en ambos escenarios, ya que eso sirve para responder una de las preguntas teóricas.
 
 ---
 
@@ -547,7 +529,7 @@ El CLI SOLO llama a `simulation.py` y muestra resultados. Nada de lógica de pla
 6. Documentación de uso:
 
    * `docs/guia_uso_consola.md`: describir cómo ejecutar `python main.py`, cómo navegar por el menú, ejemplos de salida.
-   * `docs/notas_validacion.md`: dejar apuntado algún conjunto de resultados “correctos” para que todos verifiquen que el programa funciona igual.
+   * `docs/notas_validacion.md`: dejar apuntado algún conjunto de resultados “correctos” (tiempos y promedios) para que todos verifiquen que el programa funciona igual, aunque no usen archivos de test separados.
 
 ---
 
@@ -559,18 +541,18 @@ El CLI SOLO llama a `simulation.py` y muestra resultados. Nada de lógica de pla
 2. **ÁNGEL**:
 
    * Crear `scenarios.py` con los datos fijos.
-3. **POMA, BRICKZON Y AXEL**:
+3. **POMA, BRICKZON, AXEL**:
 
    * Implementar algoritmos (FCFS, SJF, SRTF, RR).
-4. **ÁNGEL**:
+4. **ANGEL**:
 
    * Implementar `metrics.py` y `gantt.py`.
-5. **ÁNGEL + MARCO**:
+5. **ANGEL + MARCO**:
 
    * Implementar `simulation.py` y `cli.py` con el contrato acordado.
 6. **Todos**:
 
-   * Probar con los escenarios y completar los `.txt` de tests.
+   * Probar manualmente con los escenarios y anotar resultados en `docs/notas_validacion.md`.
 7. **MARCO**:
 
    * Ajustes finales y validación de coherencia entre módulos.
