@@ -8,43 +8,58 @@ Define las listas de procesos estáticas para los dos escenarios.
 from typing import List
 from .models import Proceso
 
+
 def obtener_escenario_1() -> List[Proceso]:
     """
-    Escenario 1: Carga Mixta y Ráfagas Cortas
+    ESCENARIO 1 – CARGA MIXTA:
+    Procesos con llegadas cercanas y ráfagas de distinta duración.
+
+    Tabla original:
+    Proceso | Llegada | Duración CPU
+    P1      |   0     |    12
+    P2      |   2     |     4
+    P3      |   4     |     2
+    P4      |   6     |     8
+    P5      |   8     |     3
     """
-    
-    # Datos: (nombre, llegada, duracion_cpu)
     datos_escenario_1 = [
-        ("P1", 0, 8),
-        ("P2", 1, 4),
-        ("P3", 2, 9),
-        ("P4", 3, 5),
+        ("P1", 0, 12),
+        ("P2", 2, 4),
+        ("P3", 4, 2),
+        ("P4", 6, 8),
+        ("P5", 8, 3),
     ]
 
-    lista_procesos = [
-        Proceso(nombre=d[0], llegada=d[1], duracion_cpu=d[2]) 
-        for d in datos_escenario_1
+    return [
+        Proceso(nombre=n, llegada=l, duracion_cpu=d)
+        for (n, l, d) in datos_escenario_1
     ]
-    
-    return lista_procesos
+
 
 def obtener_escenario_2() -> List[Proceso]:
     """
-    Escenario 2: Llegadas Dispersas y Ráfagas Irregulares
+    ESCENARIO 2 – LLEGADAS DISPERSAS Y RÁFAGAS IRREGULARES:
+    Procesos con llegadas separadas y duraciones variadas.
+
+    Tabla original:
+    Proceso | Llegada | Duración CPU
+    P1      |   0     |     5
+    P2      |   1     |     9
+    P3      |   2     |     6
+    P4      |   3     |     3
+    P5      |  10     |     4
+    P6      |  12     |     2
     """
-    
-    # Datos: (nombre, llegada, duracion_cpu)
     datos_escenario_2 = [
-        ("P1", 0, 7),
-        ("P2", 5, 3),
-        ("P3", 6, 12),
-        ("P4", 7, 2),
-        ("P5", 15, 5),
+        ("P1", 0, 5),
+        ("P2", 1, 9),
+        ("P3", 2, 6),
+        ("P4", 3, 3),
+        ("P5", 10, 4),
+        ("P6", 12, 2),
     ]
 
-    lista_procesos = [
-        Proceso(nombre=d[0], llegada=d[1], duracion_cpu=d[2]) 
-        for d in datos_escenario_2
+    return [
+        Proceso(nombre=n, llegada=l, duracion_cpu=d)
+        for (n, l, d) in datos_escenario_2
     ]
-    
-    return lista_procesos
