@@ -1,15 +1,7 @@
-"""
-Archivo: src/cli.py
-Responsable principal: Desarrollador 5 (ANGEL)
-
-Interfaz de lsnea de comandos (CLI) para controlar el programa.
-"""
-
 import sys
 import os
 
 
-# Configurar encoding UTF-8 para Windows
 if sys.platform == 'win32':
     try:
         import ctypes
@@ -45,15 +37,6 @@ from .export_json import (
 
 
 def seleccionar_escenario() -> int:
-    """
-    Muestra un menu para seleccionar el escenario.
-
-    Returns:
-        ID del escenario elegido (1 o 2).
-    
-    Raises:
-        ValueError: Si la entrada no es vulida.
-    """
     while True:
         print("\n" + "=" * 60)
         print("SELECCIONAR ESCENARIO")
@@ -71,12 +54,6 @@ def seleccionar_escenario() -> int:
 
 
 def seleccionar_algoritmo() -> str:
-    """
-    Muestra un menu para seleccionar el algoritmo o 'todos'.
-
-    Returns:
-        Nombre del algoritmo (FCFS, SJF, SRTF, RR_Q3, RR_Q6) o 'TODOS'.
-    """
     while True:
         print("\n" + "=" * 60)
         print("SELECCIONAR ALGORITMO")
@@ -103,42 +80,29 @@ def seleccionar_algoritmo() -> str:
 
 
 def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = False) -> None:
-    """
-    Muestra en consola los resultados de un algoritmo con formato mejorado.
-
-    Args:
-        resultado: Objeto ResultadoAlgoritmo con los datos de la simulaciun.
-        mostrar_grafico: Si es True, tambiun genera un grufico con matplotlib.
-    """
-    # Encabezado
     print("\n" + separador(80))
     print(formato_titulo(f"RESULTADOS: {resultado.nombre_algoritmo}", 80))
     print(f"  {formato_subtitulo(resultado.nombre_escenario)}")
     print(separador(80))
     
-    # 1. Mostrar diagrama de Gantt
     print(f"\n{formato_subtitulo('DIAGRAMA DE GANTT:')}")
     print(separador(80, "-"))
     imprimir_gantt(resultado.segmentos_gantt)
     
-    # 2. Mostrar tabla de mutricas por proceso
     print(f"\n{formato_subtitulo('TABLA DE MuTRICAS POR PROCESO:')}")
     print(separador(80, "-"))
     print(tabla_metricas_procesos(resultado.procesos))
     
-    # 3. Mostrar promedios
     print(f"\n{formato_subtitulo('PROMEDIOS:')}")
     print(separador(80, "-"))
     print(tabla_promedios(resultado.promedios))
 
-    # 3.1 Mostrar cambios de contexto (si estu disponible)
     if "cambios_contexto" in resultado.promedios:
         cambios = int(resultado.promedios["cambios_contexto"])
         print(f"\nCambios de contexto: {cambios}")
     
     print("\n" + separador(80))
     
-    # 4. Mostrar grufico si se solicita
     if mostrar_grafico:
         graficar_gantt(
             resultado.segmentos_gantt,
@@ -148,12 +112,6 @@ def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = Fa
 
 
 def mostrar_grafico_solo(resultado: ResultadoAlgoritmo) -> None:
-    """
-    Muestra solo el grufico de Gantt sin las tablas (para evitar duplicaciun).
-
-    Args:
-        resultado: Objeto ResultadoAlgoritmo con los datos de la simulaciun.
-    """
     graficar_gantt(
         resultado.segmentos_gantt,
         resultado.nombre_algoritmo,
@@ -162,12 +120,6 @@ def mostrar_grafico_solo(resultado: ResultadoAlgoritmo) -> None:
 
 
 def seleccionar_visualizacion() -> bool:
-    """
-    Pregunta al usuario si desea ver el diagrama de Gantt grufico.
-
-    Returns:
-        True si desea ver el grufico, False en caso contrario.
-    """
     while True:
         opcion = input("\nsDesea ver el diagrama de Gantt grufico? (s/n): ").strip().lower()
         if opcion in ("s", "si", "suu"):
@@ -179,20 +131,12 @@ def seleccionar_visualizacion() -> bool:
 
 
 def mostrar_resultados_multiples(resultados: dict, mostrar_graficos: bool = False) -> None:
-    """
-    Muestra los resultados de multiples algoritmos de forma resumida con formato mejorado.
-
-    Args:
-        resultados: Diccionario con los resultados de cada algoritmo.
-        mostrar_graficos: Si es True, genera gruficos comparativos.
-    """
     print("\n" + separador(100))
     print(formato_titulo("RESUMEN COMPARATIVO - TODOS LOS ALGORITMOS", 100))
     print(separador(100))
     
     print("\n" + tabla_comparativa_algoritmos(resultados))
     
-    # Resumen de cambios de contexto por algoritmo
     print("\n" + formato_subtitulo("Cambios de contexto por algoritmo:"))
     for nombre_algo, resultado in resultados.items():
         cambios = resultado.promedios.get("cambios_contexto")
@@ -201,46 +145,30 @@ def mostrar_resultados_multiples(resultados: dict, mostrar_graficos: bool = Fals
     
     print("\n" + separador(100))
     
-    # Si se solicita, mostrar gruficos comparativos
     if mostrar_graficos:
-        # Preparar datos para subplots
+        datos_para_graficar = {
         datos_para_graficar = {
             nombre: resultado.segmentos_gantt 
             for nombre, resultado in resultados.items()
         }
-        
-        # Obtener el nombre del escenario del primer resultado
         primer_resultado = next(iter(resultados.values()))
         nombre_escenario = primer_resultado.nombre_escenario
         
-        # Generar grufico con subplots
         graficar_gantt_subplots(datos_para_graficar, nombre_escenario)
 
 
 def mostrar_graficos_comparativos(resultados: dict) -> None:
-    """
-    Muestra solo los gruficos comparativos sin las tablas (para evitar duplicaciun).
-
-    Args:
-        resultados: Diccionario con los resultados de cada algoritmo.
-    """
-    # Preparar datos para subplots
     datos_para_graficar = {
         nombre: resultado.segmentos_gantt 
         for nombre, resultado in resultados.items()
     }
     
-    # Obtener el nombre del escenario del primer resultado
     primer_resultado = next(iter(resultados.values()))
     nombre_escenario = primer_resultado.nombre_escenario
     
-    # Generar grufico con subplots
     graficar_gantt_subplots(datos_para_graficar, nombre_escenario)
 
 def _sanitizar_nombre_archivo(texto: str) -> str:
-    """
-    Convierte un texto en algo razonable para usar como nombre de archivo.
-    """
     return (
         texto.replace(" ", "_")
              .replace("(", "")
@@ -251,10 +179,6 @@ def _sanitizar_nombre_archivo(texto: str) -> str:
 
 
 def preguntar_guardar_gantt_png(resultado: ResultadoAlgoritmo) -> None:
-    """
-    Pregunta al usuario si desea guardar el diagrama de Gantt de un algoritmo
-    como imagen PNG.
-    """
     while True:
         opcion = input("\nsDesea guardar el diagrama de Gantt como imagen PNG? (s/n): ").strip().lower()
         if opcion in ("n", "no"):
@@ -285,10 +209,6 @@ def preguntar_guardar_gantt_png(resultado: ResultadoAlgoritmo) -> None:
 
 
 def preguntar_guardar_graficos_comparativos_png(resultados: dict) -> None:
-    """
-    Pregunta al usuario si desea guardar los diagramas comparativos (subplots)
-    como una sola imagen PNG.
-    """
     if not resultados:
         return
 
@@ -297,7 +217,6 @@ def preguntar_guardar_graficos_comparativos_png(resultados: dict) -> None:
         if opcion in ("n", "no"):
             return
         elif opcion in ("s", "si", "suu"):
-            # Obtener el nombre del escenario del primer resultado
             primer_resultado = next(iter(resultados.values()))
             nombre_escenario = primer_resultado.nombre_escenario
             base_esc = _sanitizar_nombre_archivo(nombre_escenario)
@@ -306,8 +225,6 @@ def preguntar_guardar_graficos_comparativos_png(resultados: dict) -> None:
             nombre = input(f"Nombre de archivo PNG [{nombre_defecto}]: ").strip()
             if not nombre:
                 nombre = nombre_defecto
-
-            # Preparar datos para subplots
             datos_para_graficar = {
                 nombre_algo: resultado.segmentos_gantt
                 for nombre_algo, resultado in resultados.items()
@@ -329,15 +246,11 @@ def preguntar_guardar_graficos_comparativos_png(resultados: dict) -> None:
 
 
 def preguntar_exportar_resultado_json(resultado: ResultadoAlgoritmo) -> None:
-    """
-    Pregunta al usuario si desea exportar los resultados de un solo algoritmo a JSON.
-    """
     while True:
         opcion = input("\nsDesea exportar estos resultados a JSON? (s/n): ").strip().lower()
         if opcion in ("n", "no"):
             return
         elif opcion in ("s", "si", "suu"):
-            # Construir un nombre de archivo por defecto
             nombre_alg = resultado.nombre_algoritmo.replace(" ", "_").replace("(", "").replace(")", "")
             nombre_esc = resultado.nombre_escenario.replace(" ", "_").replace("-", "")
             nombre_defecto = f"resultado_{{nombre_alg}}_{{nombre_esc}}.json"
@@ -357,9 +270,6 @@ def preguntar_exportar_resultado_json(resultado: ResultadoAlgoritmo) -> None:
 
 
 def preguntar_exportar_resultados_multiples_json(resultados: dict, escenario_id: int) -> None:
-    """
-    Pregunta al usuario si desea exportar el resumen de TODOS los algoritmos a un solo JSON.
-    """
     while True:
         opcion = input("\nsDesea exportar el resumen comparativo a JSON? (s/n): ").strip().lower()
         if opcion in ("n", "no"):
@@ -381,72 +291,48 @@ def preguntar_exportar_resultados_multiples_json(resultados: dict, escenario_id:
 
 
 def ejecutar_aplicacion() -> None:
-    """
-    Orquesta el flujo de interacciun completo de la aplicaciun.
-    
-    Pasos:
-    1. Seleccionar escenario.
-    2. Seleccionar algoritmo o 'TODOS'.
-    3. Ejecutar la simulaciun.
-    4. Mostrar resultados.
-    5. Opciun de ver gruficos.
-    6. Opciun de repetir o salir.
-    """
     print("\n" + "= " * 20)
     print("BIENVENIDO AL SIMULADOR DE ALGORITMOS DE PLANIFICACIuN CPU")
     print("= " * 20)
     
     while True:
         try:
-            # 1. Seleccionar escenario
             escenario_id = seleccionar_escenario()
             
-            # 2. Seleccionar algoritmo
             algoritmo_seleccionado = seleccionar_algoritmo()
             
-            # 3. Ejecutar simulaciun
             if algoritmo_seleccionado == "TODOS":
                 print("\nEjecutando todos los algoritmos...")
                 resultados = ejecutar_todos_los_algoritmos(escenario_id)
                 
-                # Mostrar cada resultado
                 for nombre_algo, resultado in resultados.items():
                     mostrar_resultados(resultado, mostrar_grafico=False)
                 
-                # Mostrar resumen comparativo
                 mostrar_resultados_multiples(resultados, mostrar_graficos=False)
                 
-                # Preguntar si desea ver gruficos comparativos
                 mostrar_graficos = seleccionar_visualizacion()
                 if mostrar_graficos:
                     mostrar_graficos_comparativos(resultados)
                     
-                # Preguntar si desea guardar los gruficos comparativos como PNG
                 preguntar_guardar_graficos_comparativos_png(resultados)
 
-                # Preguntar si exportar el resumen comparativo a JSON
                 preguntar_exportar_resultados_multiples_json(resultados, escenario_id)                    
             else:
                 print(f"\nEjecutando {algoritmo_seleccionado}...")
                 resultado = ejecutar_algoritmo_en_escenario(algoritmo_seleccionado, escenario_id)
                 
-                # 4. Mostrar resultados
                 mostrar_resultados(resultado, mostrar_grafico=False)
                 
-                # Preguntar si desea ver grufico
                 mostrar_grafico = seleccionar_visualizacion()
                 if mostrar_grafico:
                     mostrar_grafico_solo(resultado)
                     
-                # Preguntar si desea guardar el Gantt como PNG
                 preguntar_guardar_gantt_png(resultado)
 
                 
-                # Preguntar si desea exportar a JSON
                 preguntar_exportar_resultado_json(resultado)
                     
             
-            # 5. Preguntar si continuar
             print("\n" + "=" * 80)
             while True:
                 opcion = input("\u0073Desea ejecutar otra simulaciun? (s/n): ").strip().lower()

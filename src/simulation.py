@@ -49,8 +49,8 @@ def ejecutar_algoritmo_en_escenario(
     
     
     escenario_data = cargar_escenario(escenario_id)
-    procesos: List[Proceso] = escenario_data["procesos"]  # type: ignore
-    nombre_escenario: str = escenario_data["nombre"]  # type: ignore
+    procesos: List[Proceso] = escenario_data["procesos"]
+    nombre_escenario: str = escenario_data["nombre"]
     
     
     if nombre_algoritmo not in MAPA_ALGORITMOS:
