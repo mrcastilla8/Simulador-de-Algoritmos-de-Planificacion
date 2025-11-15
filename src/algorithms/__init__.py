@@ -1,10 +1,3 @@
-"""
-Archivo: src/algorithms/__init__.py
-Responsable principal: Desarrollador 1 (Líder)
-
-Agrupa las funciones de simulación de algoritmos de planificación.
-"""
-
 from .fcfs import simular_fcfs
 from .sjf import simular_sjf
 from .srtf import simular_srtf

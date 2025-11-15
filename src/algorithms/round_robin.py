@@ -1,10 +1,3 @@
-"""
-Archivo: src/algorithms/round_robin.py
-Responsable principal: Desarrollador 4 (AXEL)
-
-Implementa el algoritmo Round Robin con quantum paramétrico y
-versiones específicas para q=3 y q=6.
-"""
 
 from typing import List, Dict
 from collections import deque
@@ -13,11 +6,9 @@ from ..metrics import calcular_metricas
 
 
 def simular_rr(procesos: List[Proceso], quantum: int) -> ResultadoAlgoritmo:
-    """
-    Simula el algoritmo Round Robin con el quantum dado.
-    """
     
-    # 1. Inicialización
+    
+    
     tiempo_actual: int = 0
     procesos_completados: int = 0
     total_procesos: int = len(procesos)
@@ -32,7 +23,7 @@ def simular_rr(procesos: List[Proceso], quantum: int) -> ResultadoAlgoritmo:
     
     idx_proximo_proceso = 0
 
-    # 2. Bucle principal de simulación
+    
     
     while procesos_completados < total_procesos:
         
@@ -76,14 +67,14 @@ def simular_rr(procesos: List[Proceso], quantum: int) -> ResultadoAlgoritmo:
         if tiempo_restante[nombre_proceso] > 0:
             cola_listos.append(proceso_actual)
         else:
-            # Ha terminado
+            
             procesos_completados += 1
 
-    # 3. Finalización y Cálculo de Métricas
+    
     
     resultados_procesos, promedios = calcular_metricas(procesos, segmentos_gantt)
 
-    # 4. Retorno del resultado
+    
     
     return ResultadoAlgoritmo(
         nombre_algoritmo=f"Round Robin (q={quantum})",
@@ -95,18 +86,14 @@ def simular_rr(procesos: List[Proceso], quantum: int) -> ResultadoAlgoritmo:
 
 
 def simular_rr_q3(procesos: List[Proceso]) -> ResultadoAlgoritmo:
-    """
-    Versión de conveniencia de Round Robin con quantum = 3 ms.
-    """
+    
     resultado = simular_rr(procesos, 3)
     resultado.nombre_algoritmo = "Round Robin (q=3)"
     return resultado
 
 
 def simular_rr_q6(procesos: List[Proceso]) -> ResultadoAlgoritmo:
-    """
-    Versión de conveniencia de Round Robin con quantum = 6 ms.
-    """
+    
     resultado = simular_rr(procesos, 6)
     resultado.nombre_algoritmo = "Round Robin (q=6)"
     return resultado

@@ -2,7 +2,7 @@
 Archivo: src/cli.py
 Responsable principal: Desarrollador 5 (ANGEL)
 
-Interfaz de línea de comandos (CLI) para controlar el programa.
+Interfaz de lsnea de comandos (CLI) para controlar el programa.
 """
 
 import sys
@@ -46,13 +46,13 @@ from .export_json import (
 
 def seleccionar_escenario() -> int:
     """
-    Muestra un menú para seleccionar el escenario.
+    Muestra un menu para seleccionar el escenario.
 
     Returns:
         ID del escenario elegido (1 o 2).
     
     Raises:
-        ValueError: Si la entrada no es válida.
+        ValueError: Si la entrada no es vulida.
     """
     while True:
         print("\n" + "=" * 60)
@@ -62,17 +62,17 @@ def seleccionar_escenario() -> int:
         print("2. Escenario 2 - Llegadas dispersas")
         print("-" * 60)
         
-        entrada = input("Ingrese el número del escenario (1 o 2): ").strip()
+        entrada = input("Ingrese el numero del escenario (1 o 2): ").strip()
         
         if entrada in ("1", "2"):
             return int(entrada)
         else:
-            print("Entrada inválida. Por favor, ingrese 1 o 2.")
+            print("Entrada invulida. Por favor, ingrese 1 o 2.")
 
 
 def seleccionar_algoritmo() -> str:
     """
-    Muestra un menú para seleccionar el algoritmo o 'todos'.
+    Muestra un menu para seleccionar el algoritmo o 'todos'.
 
     Returns:
         Nombre del algoritmo (FCFS, SJF, SRTF, RR_Q3, RR_Q6) o 'TODOS'.
@@ -88,7 +88,7 @@ def seleccionar_algoritmo() -> str:
         print(f"{len(ALGORITMOS_DISPONIBLES) + 1}. Ejecutar TODOS")
         print("-" * 60)
         
-        entrada = input("Ingrese el número del algoritmo: ").strip()
+        entrada = input("Ingrese el numero del algoritmo: ").strip()
         
         try:
             opcion = int(entrada)
@@ -97,9 +97,9 @@ def seleccionar_algoritmo() -> str:
             elif opcion == len(ALGORITMOS_DISPONIBLES) + 1:
                 return "TODOS"
             else:
-                print(f"Opción inválida. Ingrese un número entre 1 y {len(ALGORITMOS_DISPONIBLES) + 1}.")
+                print(f"Opciun invulida. Ingrese un numero entre 1 y {len(ALGORITMOS_DISPONIBLES) + 1}.")
         except ValueError:
-            print("Entrada inválida. Por favor, ingrese un número.")
+            print("Entrada invulida. Por favor, ingrese un numero.")
 
 
 def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = False) -> None:
@@ -107,8 +107,8 @@ def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = Fa
     Muestra en consola los resultados de un algoritmo con formato mejorado.
 
     Args:
-        resultado: Objeto ResultadoAlgoritmo con los datos de la simulación.
-        mostrar_grafico: Si es True, también genera un gráfico con matplotlib.
+        resultado: Objeto ResultadoAlgoritmo con los datos de la simulaciun.
+        mostrar_grafico: Si es True, tambiun genera un grufico con matplotlib.
     """
     # Encabezado
     print("\n" + separador(80))
@@ -121,8 +121,8 @@ def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = Fa
     print(separador(80, "-"))
     imprimir_gantt(resultado.segmentos_gantt)
     
-    # 2. Mostrar tabla de métricas por proceso
-    print(f"\n{formato_subtitulo('TABLA DE MÉTRICAS POR PROCESO:')}")
+    # 2. Mostrar tabla de mutricas por proceso
+    print(f"\n{formato_subtitulo('TABLA DE MuTRICAS POR PROCESO:')}")
     print(separador(80, "-"))
     print(tabla_metricas_procesos(resultado.procesos))
     
@@ -131,14 +131,14 @@ def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = Fa
     print(separador(80, "-"))
     print(tabla_promedios(resultado.promedios))
 
-    # 3.1 Mostrar cambios de contexto (si está disponible)
+    # 3.1 Mostrar cambios de contexto (si estu disponible)
     if "cambios_contexto" in resultado.promedios:
         cambios = int(resultado.promedios["cambios_contexto"])
         print(f"\nCambios de contexto: {cambios}")
     
     print("\n" + separador(80))
     
-    # 4. Mostrar gráfico si se solicita
+    # 4. Mostrar grufico si se solicita
     if mostrar_grafico:
         graficar_gantt(
             resultado.segmentos_gantt,
@@ -147,13 +147,12 @@ def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = Fa
         )
 
 
-
 def mostrar_grafico_solo(resultado: ResultadoAlgoritmo) -> None:
     """
-    Muestra solo el gráfico de Gantt sin las tablas (para evitar duplicación).
+    Muestra solo el grufico de Gantt sin las tablas (para evitar duplicaciun).
 
     Args:
-        resultado: Objeto ResultadoAlgoritmo con los datos de la simulación.
+        resultado: Objeto ResultadoAlgoritmo con los datos de la simulaciun.
     """
     graficar_gantt(
         resultado.segmentos_gantt,
@@ -164,28 +163,28 @@ def mostrar_grafico_solo(resultado: ResultadoAlgoritmo) -> None:
 
 def seleccionar_visualizacion() -> bool:
     """
-    Pregunta al usuario si desea ver el diagrama de Gantt gráfico.
+    Pregunta al usuario si desea ver el diagrama de Gantt grufico.
 
     Returns:
-        True si desea ver el gráfico, False en caso contrario.
+        True si desea ver el grufico, False en caso contrario.
     """
     while True:
-        opcion = input("\n¿Desea ver el diagrama de Gantt gráfico? (s/n): ").strip().lower()
-        if opcion in ("s", "si", "sí"):
+        opcion = input("\nsDesea ver el diagrama de Gantt grufico? (s/n): ").strip().lower()
+        if opcion in ("s", "si", "suu"):
             return True
         elif opcion in ("n", "no"):
             return False
         else:
-            print("Entrada inválida. Ingrese 's' o 'n'.")
+            print("Entrada invulida. Ingrese 's' o 'n'.")
 
 
 def mostrar_resultados_multiples(resultados: dict, mostrar_graficos: bool = False) -> None:
     """
-    Muestra los resultados de múltiples algoritmos de forma resumida con formato mejorado.
+    Muestra los resultados de multiples algoritmos de forma resumida con formato mejorado.
 
     Args:
         resultados: Diccionario con los resultados de cada algoritmo.
-        mostrar_graficos: Si es True, genera gráficos comparativos.
+        mostrar_graficos: Si es True, genera gruficos comparativos.
     """
     print("\n" + separador(100))
     print(formato_titulo("RESUMEN COMPARATIVO - TODOS LOS ALGORITMOS", 100))
@@ -202,7 +201,7 @@ def mostrar_resultados_multiples(resultados: dict, mostrar_graficos: bool = Fals
     
     print("\n" + separador(100))
     
-    # Si se solicita, mostrar gráficos comparativos
+    # Si se solicita, mostrar gruficos comparativos
     if mostrar_graficos:
         # Preparar datos para subplots
         datos_para_graficar = {
@@ -214,14 +213,13 @@ def mostrar_resultados_multiples(resultados: dict, mostrar_graficos: bool = Fals
         primer_resultado = next(iter(resultados.values()))
         nombre_escenario = primer_resultado.nombre_escenario
         
-        # Generar gráfico con subplots
+        # Generar grufico con subplots
         graficar_gantt_subplots(datos_para_graficar, nombre_escenario)
-
 
 
 def mostrar_graficos_comparativos(resultados: dict) -> None:
     """
-    Muestra solo los gráficos comparativos sin las tablas (para evitar duplicación).
+    Muestra solo los gruficos comparativos sin las tablas (para evitar duplicaciun).
 
     Args:
         resultados: Diccionario con los resultados de cada algoritmo.
@@ -236,7 +234,7 @@ def mostrar_graficos_comparativos(resultados: dict) -> None:
     primer_resultado = next(iter(resultados.values()))
     nombre_escenario = primer_resultado.nombre_escenario
     
-    # Generar gráfico con subplots
+    # Generar grufico con subplots
     graficar_gantt_subplots(datos_para_graficar, nombre_escenario)
 
 def _sanitizar_nombre_archivo(texto: str) -> str:
@@ -258,13 +256,13 @@ def preguntar_guardar_gantt_png(resultado: ResultadoAlgoritmo) -> None:
     como imagen PNG.
     """
     while True:
-        opcion = input("\n¿Desea guardar el diagrama de Gantt como imagen PNG? (s/n): ").strip().lower()
+        opcion = input("\nsDesea guardar el diagrama de Gantt como imagen PNG? (s/n): ").strip().lower()
         if opcion in ("n", "no"):
             return
-        elif opcion in ("s", "si", "sí"):
+        elif opcion in ("s", "si", "suu"):
             base_alg = _sanitizar_nombre_archivo(resultado.nombre_algoritmo)
             base_esc = _sanitizar_nombre_archivo(resultado.nombre_escenario)
-            nombre_defecto = f"gantt_{base_alg}_{base_esc}.png"
+            nombre_defecto = f"gantt_{{base_alg}}_{{base_esc}}.png"
 
             nombre = input(f"Nombre de archivo PNG [{nombre_defecto}]: ").strip()
             if not nombre:
@@ -276,14 +274,14 @@ def preguntar_guardar_gantt_png(resultado: ResultadoAlgoritmo) -> None:
                     resultado.nombre_algoritmo,
                     resultado.nombre_escenario,
                     guardar_como=nombre,
-                    mostrar=False,  # solo guardar, no volver a mostrar
+                    mostrar=False,  
                 )
                 print(f"Diagrama de Gantt guardado en: {nombre}")
             except Exception as e:
                 print(f"Error al guardar el diagrama de Gantt: {e}")
             return
         else:
-            print("Entrada inválida. Ingrese 's' o 'n'.")
+            print("Entrada invulida. Ingrese 's' o 'n'.")
 
 
 def preguntar_guardar_graficos_comparativos_png(resultados: dict) -> None:
@@ -295,15 +293,15 @@ def preguntar_guardar_graficos_comparativos_png(resultados: dict) -> None:
         return
 
     while True:
-        opcion = input("\n¿Desea guardar los diagramas comparativos como PNG? (s/n): ").strip().lower()
+        opcion = input("\nsDesea guardar los diagramas comparativos como PNG? (s/n): ").strip().lower()
         if opcion in ("n", "no"):
             return
-        elif opcion in ("s", "si", "sí"):
+        elif opcion in ("s", "si", "suu"):
             # Obtener el nombre del escenario del primer resultado
             primer_resultado = next(iter(resultados.values()))
             nombre_escenario = primer_resultado.nombre_escenario
             base_esc = _sanitizar_nombre_archivo(nombre_escenario)
-            nombre_defecto = f"gantt_comparativo_{base_esc}.png"
+            nombre_defecto = f"gantt_comparativo_{{base_esc}}.png"
 
             nombre = input(f"Nombre de archivo PNG [{nombre_defecto}]: ").strip()
             if not nombre:
@@ -320,14 +318,14 @@ def preguntar_guardar_graficos_comparativos_png(resultados: dict) -> None:
                     datos_para_graficar,
                     nombre_escenario,
                     guardar_como=nombre,
-                    mostrar=False,  # solo guardar
+                    mostrar=False,  
                 )
                 print(f"Diagramas comparativos guardados en: {nombre}")
             except Exception as e:
                 print(f"Error al guardar los diagramas comparativos: {e}")
             return
         else:
-            print("Entrada inválida. Ingrese 's' o 'n'.")
+            print("Entrada invulida. Ingrese 's' o 'n'.")
 
 
 def preguntar_exportar_resultado_json(resultado: ResultadoAlgoritmo) -> None:
@@ -335,14 +333,14 @@ def preguntar_exportar_resultado_json(resultado: ResultadoAlgoritmo) -> None:
     Pregunta al usuario si desea exportar los resultados de un solo algoritmo a JSON.
     """
     while True:
-        opcion = input("\n¿Desea exportar estos resultados a JSON? (s/n): ").strip().lower()
+        opcion = input("\nsDesea exportar estos resultados a JSON? (s/n): ").strip().lower()
         if opcion in ("n", "no"):
             return
-        elif opcion in ("s", "si", "sí"):
+        elif opcion in ("s", "si", "suu"):
             # Construir un nombre de archivo por defecto
             nombre_alg = resultado.nombre_algoritmo.replace(" ", "_").replace("(", "").replace(")", "")
             nombre_esc = resultado.nombre_escenario.replace(" ", "_").replace("-", "")
-            nombre_defecto = f"resultado_{nombre_alg}_{nombre_esc}.json"
+            nombre_defecto = f"resultado_{{nombre_alg}}_{{nombre_esc}}.json"
 
             nombre = input(f"Nombre de archivo JSON [{nombre_defecto}]: ").strip()
             if not nombre:
@@ -355,7 +353,7 @@ def preguntar_exportar_resultado_json(resultado: ResultadoAlgoritmo) -> None:
                 print(f"Error al exportar a JSON: {e}")
             return
         else:
-            print("Entrada inválida. Ingrese 's' o 'n'.")
+            print("Entrada invulida. Ingrese 's' o 'n'.")
 
 
 def preguntar_exportar_resultados_multiples_json(resultados: dict, escenario_id: int) -> None:
@@ -363,11 +361,11 @@ def preguntar_exportar_resultados_multiples_json(resultados: dict, escenario_id:
     Pregunta al usuario si desea exportar el resumen de TODOS los algoritmos a un solo JSON.
     """
     while True:
-        opcion = input("\n¿Desea exportar el resumen comparativo a JSON? (s/n): ").strip().lower()
+        opcion = input("\nsDesea exportar el resumen comparativo a JSON? (s/n): ").strip().lower()
         if opcion in ("n", "no"):
             return
-        elif opcion in ("s", "si", "sí"):
-            nombre_defecto = f"resultados_escenario_{escenario_id}.json"
+        elif opcion in ("s", "si", "suu"):
+            nombre_defecto = f"resultados_escenario_{{escenario_id}}.json"
             nombre = input(f"Nombre de archivo JSON [{nombre_defecto}]: ").strip()
             if not nombre:
                 nombre = nombre_defecto
@@ -379,23 +377,23 @@ def preguntar_exportar_resultados_multiples_json(resultados: dict, escenario_id:
                 print(f"Error al exportar a JSON: {e}")
             return
         else:
-            print("Entrada inválida. Ingrese 's' o 'n'.")
+            print("Entrada invulida. Ingrese 's' o 'n'.")
 
 
 def ejecutar_aplicacion() -> None:
     """
-    Orquesta el flujo de interacción completo de la aplicación.
+    Orquesta el flujo de interacciun completo de la aplicaciun.
     
     Pasos:
     1. Seleccionar escenario.
     2. Seleccionar algoritmo o 'TODOS'.
-    3. Ejecutar la simulación.
+    3. Ejecutar la simulaciun.
     4. Mostrar resultados.
-    5. Opción de ver gráficos.
-    6. Opción de repetir o salir.
+    5. Opciun de ver gruficos.
+    6. Opciun de repetir o salir.
     """
     print("\n" + "= " * 20)
-    print("BIENVENIDO AL SIMULADOR DE ALGORITMOS DE PLANIFICACIÓN CPU")
+    print("BIENVENIDO AL SIMULADOR DE ALGORITMOS DE PLANIFICACIuN CPU")
     print("= " * 20)
     
     while True:
@@ -406,7 +404,7 @@ def ejecutar_aplicacion() -> None:
             # 2. Seleccionar algoritmo
             algoritmo_seleccionado = seleccionar_algoritmo()
             
-            # 3. Ejecutar simulación
+            # 3. Ejecutar simulaciun
             if algoritmo_seleccionado == "TODOS":
                 print("\nEjecutando todos los algoritmos...")
                 resultados = ejecutar_todos_los_algoritmos(escenario_id)
@@ -418,12 +416,12 @@ def ejecutar_aplicacion() -> None:
                 # Mostrar resumen comparativo
                 mostrar_resultados_multiples(resultados, mostrar_graficos=False)
                 
-                # Preguntar si desea ver gráficos comparativos
+                # Preguntar si desea ver gruficos comparativos
                 mostrar_graficos = seleccionar_visualizacion()
                 if mostrar_graficos:
                     mostrar_graficos_comparativos(resultados)
                     
-                # Preguntar si desea guardar los gráficos comparativos como PNG
+                # Preguntar si desea guardar los gruficos comparativos como PNG
                 preguntar_guardar_graficos_comparativos_png(resultados)
 
                 # Preguntar si exportar el resumen comparativo a JSON
@@ -435,7 +433,7 @@ def ejecutar_aplicacion() -> None:
                 # 4. Mostrar resultados
                 mostrar_resultados(resultado, mostrar_grafico=False)
                 
-                # Preguntar si desea ver gráfico
+                # Preguntar si desea ver grufico
                 mostrar_grafico = seleccionar_visualizacion()
                 if mostrar_grafico:
                     mostrar_grafico_solo(resultado)
@@ -451,13 +449,13 @@ def ejecutar_aplicacion() -> None:
             # 5. Preguntar si continuar
             print("\n" + "=" * 80)
             while True:
-                opcion = input("¿Desea ejecutar otra simulación? (s/n): ").strip().lower()
-                if opcion in ("s", "si", "sí"):
+                opcion = input("\u0073Desea ejecutar otra simulaciun? (s/n): ").strip().lower()
+                if opcion in ("s", "si", "suu"):
                     break
                 elif opcion in ("n", "no"):
                     return
                 else:
-                    print("Entrada inválida. Ingrese 's' o 'n'.")
+                    print("Entrada invulida. Ingrese 's' o 'n'.")
         
         except ValueError as e:
             print(f"\nError: {e}")

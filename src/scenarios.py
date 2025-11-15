@@ -1,27 +1,9 @@
-"""
-Archivo: src/scenarios.py
-Responsable principal: Desarrollador 5 (ANGEL)
-
-Define las listas de procesos estáticas para los dos escenarios.
-"""
-
 from typing import List
 from .models import Proceso
 
 
 def obtener_escenario_1() -> List[Proceso]:
-    """
-    ESCENARIO 1 – CARGA MIXTA:
-    Procesos con llegadas cercanas y ráfagas de distinta duración.
-
-    Tabla original:
-    Proceso | Llegada | Duración CPU
-    P1      |   0     |    12
-    P2      |   2     |     4
-    P3      |   4     |     2
-    P4      |   6     |     8
-    P5      |   8     |     3
-    """
+    
     datos_escenario_1 = [
         ("P1", 0, 12),
         ("P2", 2, 4),
@@ -37,19 +19,7 @@ def obtener_escenario_1() -> List[Proceso]:
 
 
 def obtener_escenario_2() -> List[Proceso]:
-    """
-    ESCENARIO 2 – LLEGADAS DISPERSAS Y RÁFAGAS IRREGULARES:
-    Procesos con llegadas separadas y duraciones variadas.
-
-    Tabla original:
-    Proceso | Llegada | Duración CPU
-    P1      |   0     |     5
-    P2      |   1     |     9
-    P3      |   2     |     6
-    P4      |   3     |     3
-    P5      |  10     |     4
-    P6      |  12     |     2
-    """
+    
     datos_escenario_2 = [
         ("P1", 0, 5),
         ("P2", 1, 9),
