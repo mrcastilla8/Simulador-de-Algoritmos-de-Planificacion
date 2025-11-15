@@ -5,6 +5,19 @@ Responsable principal: Desarrollador 5 (ANGEL)
 Interfaz de línea de comandos (CLI) para controlar el programa.
 """
 
+import sys
+import os
+
+# Configurar encoding UTF-8 para Windows
+if sys.platform == 'win32':
+    try:
+        import ctypes
+        ctypes.windll.kernel32.SetConsoleCP(65001)
+        ctypes.windll.kernel32.SetConsoleOutputCP(65001)
+        os.environ['PYTHONIOENCODING'] = 'utf-8'
+    except:
+        pass
+
 from typing import Union
 from .models import ResultadoAlgoritmo
 from .simulation import (
@@ -13,6 +26,15 @@ from .simulation import (
     ejecutar_todos_los_algoritmos,
 )
 from .gantt import imprimir_gantt, graficar_gantt, graficar_gantt_subplots
+from .formatters import (
+    Colores,
+    formato_titulo,
+    formato_subtitulo,
+    tabla_metricas_procesos,
+    tabla_promedios,
+    tabla_comparativa_algoritmos,
+    separador,
+)
 
 
 def seleccionar_escenario() -> int:
@@ -75,49 +97,34 @@ def seleccionar_algoritmo() -> str:
 
 def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = False) -> None:
     """
-    Muestra en consola los resultados de un algoritmo.
+    Muestra en consola los resultados de un algoritmo con formato mejorado.
 
     Args:
         resultado: Objeto ResultadoAlgoritmo con los datos de la simulación.
         mostrar_grafico: Si es True, también genera un gráfico con matplotlib.
     """
-    print("\n" + "=" * 80)
-    print(f"RESULTADOS: {resultado.nombre_algoritmo} - {resultado.nombre_escenario}")
-    print("=" * 80)
+    # Encabezado
+    print("\n" + separador(80))
+    print(formato_titulo(f"RESULTADOS: {resultado.nombre_algoritmo}", 80))
+    print(f"  {formato_subtitulo(resultado.nombre_escenario)}")
+    print(separador(80))
     
     # 1. Mostrar diagrama de Gantt
-    print("\nDIAGRAMA DE GANTT:")
-    print("-" * 80)
+    print(f"\n{formato_subtitulo('DIAGRAMA DE GANTT:')}")
+    print(separador(80, "-"))
     imprimir_gantt(resultado.segmentos_gantt)
     
     # 2. Mostrar tabla de métricas por proceso
-    print("\nTABLA DE MÉTRICAS POR PROCESO:")
-    print("-" * 80)
-    
-    # Encabezados
-    print(f"{'Proceso':<10} {'Llegada':<10} {'Duración':<10} {'Finalización':<15} {'Retorno':<10} {'Espera':<10} {'Respuesta':<10}")
-    print("-" * 80)
-    
-    # Filas de datos
-    for resultado_proceso in resultado.procesos:
-        print(
-            f"{resultado_proceso.nombre:<10} "
-            f"{resultado_proceso.llegada:<10} "
-            f"{resultado_proceso.duracion_cpu:<10} "
-            f"{resultado_proceso.tiempo_finalizacion:<15} "
-            f"{resultado_proceso.tiempo_retorno:<10} "
-            f"{resultado_proceso.tiempo_espera:<10} "
-            f"{resultado_proceso.tiempo_respuesta:<10}"
-        )
+    print(f"\n{formato_subtitulo('TABLA DE MÉTRICAS POR PROCESO:')}")
+    print(separador(80, "-"))
+    print(tabla_metricas_procesos(resultado.procesos))
     
     # 3. Mostrar promedios
-    print("\n" + "-" * 80)
-    print("PROMEDIOS:")
-    print("-" * 80)
-    print(f"Tiempo de Retorno Promedio:   {resultado.promedios.get('tiempo_retorno_promedio', 0):.2f}")
-    print(f"Tiempo de Espera Promedio:    {resultado.promedios.get('tiempo_espera_promedio', 0):.2f}")
-    print(f"Tiempo de Respuesta Promedio: {resultado.promedios.get('tiempo_respuesta_promedio', 0):.2f}")
-    print("=" * 80)
+    print(f"\n{formato_subtitulo('PROMEDIOS:')}")
+    print(separador(80, "-"))
+    print(tabla_promedios(resultado.promedios))
+    
+    print("\n" + separador(80))
     
     # 4. Mostrar gráfico si se solicita
     if mostrar_grafico:
@@ -126,6 +133,20 @@ def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = Fa
             resultado.nombre_algoritmo,
             resultado.nombre_escenario
         )
+
+
+def mostrar_grafico_solo(resultado: ResultadoAlgoritmo) -> None:
+    """
+    Muestra solo el gráfico de Gantt sin las tablas (para evitar duplicación).
+
+    Args:
+        resultado: Objeto ResultadoAlgoritmo con los datos de la simulación.
+    """
+    graficar_gantt(
+        resultado.segmentos_gantt,
+        resultado.nombre_algoritmo,
+        resultado.nombre_escenario
+    )
 
 
 def seleccionar_visualizacion() -> bool:
@@ -147,33 +168,19 @@ def seleccionar_visualizacion() -> bool:
 
 def mostrar_resultados_multiples(resultados: dict, mostrar_graficos: bool = False) -> None:
     """
-    Muestra los resultados de múltiples algoritmos de forma resumida.
+    Muestra los resultados de múltiples algoritmos de forma resumida con formato mejorado.
 
     Args:
         resultados: Diccionario con los resultados de cada algoritmo.
         mostrar_graficos: Si es True, genera gráficos comparativos.
     """
-    print("\n" + "=" * 100)
-    print("RESUMEN COMPARATIVO - TODOS LOS ALGORITMOS")
-    print("=" * 100)
+    print("\n" + separador(100))
+    print(formato_titulo("RESUMEN COMPARATIVO - TODOS LOS ALGORITMOS", 100))
+    print(separador(100))
     
-    # Tabla comparativa de promedios
-    print(f"{'Algoritmo':<15} {'Retorno Prom.':<18} {'Espera Prom.':<18} {'Respuesta Prom.':<18}")
-    print("-" * 100)
+    print("\n" + tabla_comparativa_algoritmos(resultados))
     
-    for nombre_algo, resultado in resultados.items():
-        retorno_prom = resultado.promedios.get('tiempo_retorno_promedio', 0)
-        espera_prom = resultado.promedios.get('tiempo_espera_promedio', 0)
-        respuesta_prom = resultado.promedios.get('tiempo_respuesta_promedio', 0)
-        
-        print(
-            f"{nombre_algo:<15} "
-            f"{retorno_prom:<18.2f} "
-            f"{espera_prom:<18.2f} "
-            f"{respuesta_prom:<18.2f}"
-        )
-    
-    print("=" * 100)
+    print("\n" + separador(100))
     
     # Si se solicita, mostrar gráficos comparativos
     if mostrar_graficos:
@@ -189,6 +196,27 @@ def mostrar_resultados_multiples(resultados: dict, mostrar_graficos: bool = Fals
         
         # Generar gráfico con subplots
         graficar_gantt_subplots(datos_para_graficar, nombre_escenario)
+
+
+def mostrar_graficos_comparativos(resultados: dict) -> None:
+    """
+    Muestra solo los gráficos comparativos sin las tablas (para evitar duplicación).
+
+    Args:
+        resultados: Diccionario con los resultados de cada algoritmo.
+    """
+    # Preparar datos para subplots
+    datos_para_graficar = {
+        nombre: resultado.segmentos_gantt 
+        for nombre, resultado in resultados.items()
+    }
+    
+    # Obtener el nombre del escenario del primer resultado
+    primer_resultado = next(iter(resultados.values()))
+    nombre_escenario = primer_resultado.nombre_escenario
+    
+    # Generar gráfico con subplots
+    graficar_gantt_subplots(datos_para_graficar, nombre_escenario)
 
 
 def ejecutar_aplicacion() -> None:
@@ -230,7 +258,7 @@ def ejecutar_aplicacion() -> None:
                 # Preguntar si desea ver gráficos comparativos
                 mostrar_graficos = seleccionar_visualizacion()
                 if mostrar_graficos:
-                    mostrar_resultados_multiples(resultados, mostrar_graficos=True)
+                    mostrar_graficos_comparativos(resultados)
             else:
                 print(f"\nEjecutando {algoritmo_seleccionado}...")
                 resultado = ejecutar_algoritmo_en_escenario(algoritmo_seleccionado, escenario_id)
@@ -241,7 +269,7 @@ def ejecutar_aplicacion() -> None:
                 # Preguntar si desea ver gráfico
                 mostrar_grafico = seleccionar_visualizacion()
                 if mostrar_grafico:
-                    mostrar_resultados(resultado, mostrar_grafico=True)
+                    mostrar_grafico_solo(resultado)
             
             # 5. Preguntar si continuar
             print("\n" + "=" * 80)
