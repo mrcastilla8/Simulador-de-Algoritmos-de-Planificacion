@@ -123,6 +123,11 @@ def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = Fa
     print(f"\n{formato_subtitulo('PROMEDIOS:')}")
     print(separador(80, "-"))
     print(tabla_promedios(resultado.promedios))
+
+    # 3.1 Mostrar cambios de contexto (si está disponible)
+    if "cambios_contexto" in resultado.promedios:
+        cambios = int(resultado.promedios["cambios_contexto"])
+        print(f"\nCambios de contexto: {cambios}")
     
     print("\n" + separador(80))
     
@@ -133,6 +138,7 @@ def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = Fa
             resultado.nombre_algoritmo,
             resultado.nombre_escenario
         )
+
 
 
 def mostrar_grafico_solo(resultado: ResultadoAlgoritmo) -> None:
@@ -180,6 +186,13 @@ def mostrar_resultados_multiples(resultados: dict, mostrar_graficos: bool = Fals
     
     print("\n" + tabla_comparativa_algoritmos(resultados))
     
+    # Resumen de cambios de contexto por algoritmo
+    print("\n" + formato_subtitulo("Cambios de contexto por algoritmo:"))
+    for nombre_algo, resultado in resultados.items():
+        cambios = resultado.promedios.get("cambios_contexto")
+        if cambios is not None:
+            print(f"  - {nombre_algo}: {int(cambios)}")
+    
     print("\n" + separador(100))
     
     # Si se solicita, mostrar gráficos comparativos
@@ -196,6 +209,7 @@ def mostrar_resultados_multiples(resultados: dict, mostrar_graficos: bool = Fals
         
         # Generar gráfico con subplots
         graficar_gantt_subplots(datos_para_graficar, nombre_escenario)
+
 
 
 def mostrar_graficos_comparativos(resultados: dict) -> None:
