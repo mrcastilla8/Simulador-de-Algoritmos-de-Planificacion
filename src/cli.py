@@ -12,7 +12,7 @@ from .simulation import (
     ejecutar_algoritmo_en_escenario,
     ejecutar_todos_los_algoritmos,
 )
-from .gantt import imprimir_gantt
+from .gantt import imprimir_gantt, graficar_gantt, graficar_gantt_subplots
 
 
 def seleccionar_escenario() -> int:
@@ -73,12 +73,13 @@ def seleccionar_algoritmo() -> str:
             print("Entrada inválida. Por favor, ingrese un número.")
 
 
-def mostrar_resultados(resultado: ResultadoAlgoritmo) -> None:
+def mostrar_resultados(resultado: ResultadoAlgoritmo, mostrar_grafico: bool = False) -> None:
     """
     Muestra en consola los resultados de un algoritmo.
 
     Args:
         resultado: Objeto ResultadoAlgoritmo con los datos de la simulación.
+        mostrar_grafico: Si es True, también genera un gráfico con matplotlib.
     """
     print("\n" + "=" * 80)
     print(f"RESULTADOS: {resultado.nombre_algoritmo} - {resultado.nombre_escenario}")
@@ -117,14 +118,40 @@ def mostrar_resultados(resultado: ResultadoAlgoritmo) -> None:
     print(f"Tiempo de Espera Promedio:    {resultado.promedios.get('tiempo_espera_promedio', 0):.2f}")
     print(f"Tiempo de Respuesta Promedio: {resultado.promedios.get('tiempo_respuesta_promedio', 0):.2f}")
     print("=" * 80)
+    
+    # 4. Mostrar gráfico si se solicita
+    if mostrar_grafico:
+        graficar_gantt(
+            resultado.segmentos_gantt,
+            resultado.nombre_algoritmo,
+            resultado.nombre_escenario
+        )
 
 
-def mostrar_resultados_multiples(resultados: dict) -> None:
+def seleccionar_visualizacion() -> bool:
+    """
+    Pregunta al usuario si desea ver el diagrama de Gantt gráfico.
+
+    Returns:
+        True si desea ver el gráfico, False en caso contrario.
+    """
+    while True:
+        opcion = input("\n¿Desea ver el diagrama de Gantt gráfico? (s/n): ").strip().lower()
+        if opcion in ("s", "si", "sí"):
+            return True
+        elif opcion in ("n", "no"):
+            return False
+        else:
+            print("Entrada inválida. Ingrese 's' o 'n'.")
+
+
+def mostrar_resultados_multiples(resultados: dict, mostrar_graficos: bool = False) -> None:
     """
     Muestra los resultados de múltiples algoritmos de forma resumida.
 
     Args:
         resultados: Diccionario con los resultados de cada algoritmo.
+        mostrar_graficos: Si es True, genera gráficos comparativos.
     """
     print("\n" + "=" * 100)
     print("RESUMEN COMPARATIVO - TODOS LOS ALGORITMOS")
@@ -147,6 +174,21 @@ def mostrar_resultados_multiples(resultados: dict) -> None:
         )
     
     print("=" * 100)
+    
+    # Si se solicita, mostrar gráficos comparativos
+    if mostrar_graficos:
+        # Preparar datos para subplots
+        datos_para_graficar = {
+            nombre: resultado.segmentos_gantt 
+            for nombre, resultado in resultados.items()
+        }
+        
+        # Obtener el nombre del escenario del primer resultado
+        primer_resultado = next(iter(resultados.values()))
+        nombre_escenario = primer_resultado.nombre_escenario
+        
+        # Generar gráfico con subplots
+        graficar_gantt_subplots(datos_para_graficar, nombre_escenario)
 
 
 def ejecutar_aplicacion() -> None:
@@ -158,7 +200,8 @@ def ejecutar_aplicacion() -> None:
     2. Seleccionar algoritmo o 'TODOS'.
     3. Ejecutar la simulación.
     4. Mostrar resultados.
-    5. Opción de repetir o salir.
+    5. Opción de ver gráficos.
+    6. Opción de repetir o salir.
     """
     print("\n" + "= " * 20)
     print("BIENVENIDO AL SIMULADOR DE ALGORITMOS DE PLANIFICACIÓN CPU")
@@ -179,16 +222,26 @@ def ejecutar_aplicacion() -> None:
                 
                 # Mostrar cada resultado
                 for nombre_algo, resultado in resultados.items():
-                    mostrar_resultados(resultado)
+                    mostrar_resultados(resultado, mostrar_grafico=False)
                 
                 # Mostrar resumen comparativo
-                mostrar_resultados_multiples(resultados)
+                mostrar_resultados_multiples(resultados, mostrar_graficos=False)
+                
+                # Preguntar si desea ver gráficos comparativos
+                mostrar_graficos = seleccionar_visualizacion()
+                if mostrar_graficos:
+                    mostrar_resultados_multiples(resultados, mostrar_graficos=True)
             else:
                 print(f"\nEjecutando {algoritmo_seleccionado}...")
                 resultado = ejecutar_algoritmo_en_escenario(algoritmo_seleccionado, escenario_id)
                 
                 # 4. Mostrar resultados
-                mostrar_resultados(resultado)
+                mostrar_resultados(resultado, mostrar_grafico=False)
+                
+                # Preguntar si desea ver gráfico
+                mostrar_grafico = seleccionar_visualizacion()
+                if mostrar_grafico:
+                    mostrar_resultados(resultado, mostrar_grafico=True)
             
             # 5. Preguntar si continuar
             print("\n" + "=" * 80)
@@ -197,7 +250,6 @@ def ejecutar_aplicacion() -> None:
                 if opcion in ("s", "si", "sí"):
                     break
                 elif opcion in ("n", "no"):
-                    print("\nGracias por usar el simulador. ¡Hasta luego!")
                     return
                 else:
                     print("Entrada inválida. Ingrese 's' o 'n'.")
