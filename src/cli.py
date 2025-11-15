@@ -8,6 +8,7 @@ Interfaz de línea de comandos (CLI) para controlar el programa.
 import sys
 import os
 
+
 # Configurar encoding UTF-8 para Windows
 if sys.platform == 'win32':
     try:
@@ -20,6 +21,7 @@ if sys.platform == 'win32':
 
 from typing import Union
 from .models import ResultadoAlgoritmo
+
 from .simulation import (
     ALGORITMOS_DISPONIBLES,
     ejecutar_algoritmo_en_escenario,
@@ -35,6 +37,11 @@ from .formatters import (
     tabla_comparativa_algoritmos,
     separador,
 )
+from .export_json import (
+    exportar_resultado_json,
+    exportar_resultados_multiples_json,
+)
+
 
 
 def seleccionar_escenario() -> int:
@@ -232,6 +239,148 @@ def mostrar_graficos_comparativos(resultados: dict) -> None:
     # Generar gráfico con subplots
     graficar_gantt_subplots(datos_para_graficar, nombre_escenario)
 
+def _sanitizar_nombre_archivo(texto: str) -> str:
+    """
+    Convierte un texto en algo razonable para usar como nombre de archivo.
+    """
+    return (
+        texto.replace(" ", "_")
+             .replace("(", "")
+             .replace(")", "")
+             .replace("-", "_")
+             .replace(":", "")
+    )
+
+
+def preguntar_guardar_gantt_png(resultado: ResultadoAlgoritmo) -> None:
+    """
+    Pregunta al usuario si desea guardar el diagrama de Gantt de un algoritmo
+    como imagen PNG.
+    """
+    while True:
+        opcion = input("\n¿Desea guardar el diagrama de Gantt como imagen PNG? (s/n): ").strip().lower()
+        if opcion in ("n", "no"):
+            return
+        elif opcion in ("s", "si", "sí"):
+            base_alg = _sanitizar_nombre_archivo(resultado.nombre_algoritmo)
+            base_esc = _sanitizar_nombre_archivo(resultado.nombre_escenario)
+            nombre_defecto = f"gantt_{base_alg}_{base_esc}.png"
+
+            nombre = input(f"Nombre de archivo PNG [{nombre_defecto}]: ").strip()
+            if not nombre:
+                nombre = nombre_defecto
+
+            try:
+                graficar_gantt(
+                    resultado.segmentos_gantt,
+                    resultado.nombre_algoritmo,
+                    resultado.nombre_escenario,
+                    guardar_como=nombre,
+                    mostrar=False,  # solo guardar, no volver a mostrar
+                )
+                print(f"Diagrama de Gantt guardado en: {nombre}")
+            except Exception as e:
+                print(f"Error al guardar el diagrama de Gantt: {e}")
+            return
+        else:
+            print("Entrada inválida. Ingrese 's' o 'n'.")
+
+
+def preguntar_guardar_graficos_comparativos_png(resultados: dict) -> None:
+    """
+    Pregunta al usuario si desea guardar los diagramas comparativos (subplots)
+    como una sola imagen PNG.
+    """
+    if not resultados:
+        return
+
+    while True:
+        opcion = input("\n¿Desea guardar los diagramas comparativos como PNG? (s/n): ").strip().lower()
+        if opcion in ("n", "no"):
+            return
+        elif opcion in ("s", "si", "sí"):
+            # Obtener el nombre del escenario del primer resultado
+            primer_resultado = next(iter(resultados.values()))
+            nombre_escenario = primer_resultado.nombre_escenario
+            base_esc = _sanitizar_nombre_archivo(nombre_escenario)
+            nombre_defecto = f"gantt_comparativo_{base_esc}.png"
+
+            nombre = input(f"Nombre de archivo PNG [{nombre_defecto}]: ").strip()
+            if not nombre:
+                nombre = nombre_defecto
+
+            # Preparar datos para subplots
+            datos_para_graficar = {
+                nombre_algo: resultado.segmentos_gantt
+                for nombre_algo, resultado in resultados.items()
+            }
+
+            try:
+                graficar_gantt_subplots(
+                    datos_para_graficar,
+                    nombre_escenario,
+                    guardar_como=nombre,
+                    mostrar=False,  # solo guardar
+                )
+                print(f"Diagramas comparativos guardados en: {nombre}")
+            except Exception as e:
+                print(f"Error al guardar los diagramas comparativos: {e}")
+            return
+        else:
+            print("Entrada inválida. Ingrese 's' o 'n'.")
+
+
+def preguntar_exportar_resultado_json(resultado: ResultadoAlgoritmo) -> None:
+    """
+    Pregunta al usuario si desea exportar los resultados de un solo algoritmo a JSON.
+    """
+    while True:
+        opcion = input("\n¿Desea exportar estos resultados a JSON? (s/n): ").strip().lower()
+        if opcion in ("n", "no"):
+            return
+        elif opcion in ("s", "si", "sí"):
+            # Construir un nombre de archivo por defecto
+            nombre_alg = resultado.nombre_algoritmo.replace(" ", "_").replace("(", "").replace(")", "")
+            nombre_esc = resultado.nombre_escenario.replace(" ", "_").replace("-", "")
+            nombre_defecto = f"resultado_{nombre_alg}_{nombre_esc}.json"
+
+            nombre = input(f"Nombre de archivo JSON [{nombre_defecto}]: ").strip()
+            if not nombre:
+                nombre = nombre_defecto
+
+            try:
+                exportar_resultado_json(resultado, nombre)
+                print(f"Resultados exportados en: {nombre}")
+            except Exception as e:
+                print(f"Error al exportar a JSON: {e}")
+            return
+        else:
+            print("Entrada inválida. Ingrese 's' o 'n'.")
+
+
+def preguntar_exportar_resultados_multiples_json(resultados: dict, escenario_id: int) -> None:
+    """
+    Pregunta al usuario si desea exportar el resumen de TODOS los algoritmos a un solo JSON.
+    """
+    while True:
+        opcion = input("\n¿Desea exportar el resumen comparativo a JSON? (s/n): ").strip().lower()
+        if opcion in ("n", "no"):
+            return
+        elif opcion in ("s", "si", "sí"):
+            nombre_defecto = f"resultados_escenario_{escenario_id}.json"
+            nombre = input(f"Nombre de archivo JSON [{nombre_defecto}]: ").strip()
+            if not nombre:
+                nombre = nombre_defecto
+
+            try:
+                exportar_resultados_multiples_json(resultados, nombre)
+                print(f"Resumen exportado en: {nombre}")
+            except Exception as e:
+                print(f"Error al exportar a JSON: {e}")
+            return
+        else:
+            print("Entrada inválida. Ingrese 's' o 'n'.")
+
 
 def ejecutar_aplicacion() -> None:
     """
@@ -273,6 +422,12 @@ def ejecutar_aplicacion() -> None:
                 mostrar_graficos = seleccionar_visualizacion()
                 if mostrar_graficos:
                     mostrar_graficos_comparativos(resultados)
+                    
+                # Preguntar si desea guardar los gráficos comparativos como PNG
+                preguntar_guardar_graficos_comparativos_png(resultados)
+
+                # Preguntar si exportar el resumen comparativo a JSON
+                preguntar_exportar_resultados_multiples_json(resultados, escenario_id)                    
             else:
                 print(f"\nEjecutando {algoritmo_seleccionado}...")
                 resultado = ejecutar_algoritmo_en_escenario(algoritmo_seleccionado, escenario_id)
@@ -284,6 +439,14 @@ def ejecutar_aplicacion() -> None:
                 mostrar_grafico = seleccionar_visualizacion()
                 if mostrar_grafico:
                     mostrar_grafico_solo(resultado)
+                    
+                # Preguntar si desea guardar el Gantt como PNG
+                preguntar_guardar_gantt_png(resultado)
+
+                
+                # Preguntar si desea exportar a JSON
+                preguntar_exportar_resultado_json(resultado)
+                    
             
             # 5. Preguntar si continuar
             print("\n" + "=" * 80)

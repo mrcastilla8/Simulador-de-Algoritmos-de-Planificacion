@@ -92,7 +92,8 @@ def graficar_gantt(
     segmentos_gantt: List[SegmentoGantt],
     nombre_algoritmo: str,
     nombre_escenario: str,
-    guardar_como: Optional[str] = None
+    guardar_como: Optional[str] = None,
+    mostrar: bool = True,
 ) -> None:
     """
     Crea un diagrama de Gantt gráfico usando matplotlib.
@@ -193,7 +194,8 @@ def graficar_gantt(
 def graficar_gantt_subplots(
     resultados: dict,
     nombre_escenario: str,
-    guardar_como: Optional[str] = None
+    guardar_como: Optional[str] = None,
+    mostrar: bool = True,
 ) -> None:
     """
     Crea una figura con múltiples subplots, uno para cada algoritmo.

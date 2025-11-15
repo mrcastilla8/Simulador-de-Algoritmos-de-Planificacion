@@ -12,3 +12,4 @@ src/algorithms/__pycache__/round_robin.cpython-313.pyc
 src/algorithms/__pycache__/sjf.cpython-313.pyc
 src/algorithms/__pycache__/srtf.cpython-313.pyc
 src/__pycache__/formatters.cpython-313.pyc
+src/__pycache__/export_json.cpython-313.pyc
